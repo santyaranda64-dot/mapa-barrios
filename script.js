@@ -32,7 +32,7 @@ fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vQUDk_hKSVyoC6w4k0Do4QVTv
 
 function cargarBarrios() {
 
-  fetch("caba_barrios.json")")
+  fetch("caba_barrios.json")
     .then(res => res.json())
     .then(data => {
 
@@ -87,4 +87,5 @@ function cargarBarrios() {
 
     });
 }
+
 
