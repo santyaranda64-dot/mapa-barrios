@@ -19,13 +19,13 @@ fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vQUDk_hKSVyoC6w4k0Do4QVTv
         const columnas = fila.split(",");
 
         return {
-           barrio: columnas[0] ? columnas[0].trim() : "",
-  nombre: columnas[1] ? columnas[1].trim() : "",
-  actividad: columnas[2] ? columnas[2].trim() : "",
-  direccion: columnas[3] ? columnas[3].trim() : ""
-        };
-      });
-
+    barrio: columnas[0]?.trim(),
+    nombre: columnas[1]?.trim(),
+    actividad: columnas[2]?.trim(),
+    direccion: columnas[3]?.trim(),
+    tipo: columnas[4]?.trim()   //
+  };
+});
     //  Recién ahora cargamos los barrios
     cargarBarrios();
   });
@@ -87,6 +87,7 @@ function cargarBarrios() {
 
     });
 }
+
 
 
 
