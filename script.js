@@ -19,10 +19,10 @@ fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vQUDk_hKSVyoC6w4k0Do4QVTv
         const columnas = fila.split(",");
 
         return {
-          barrio: columnas[0]?.trim(),
-          nombre: columnas[1]?.trim(),
-          actividad: columnas[2]?.trim(),
-          direccion: columnas[3]?.trim()
+           barrio: columnas[0] ? columnas[0].trim() : "",
+  nombre: columnas[1] ? columnas[1].trim() : "",
+  actividad: columnas[2] ? columnas[2].trim() : "",
+  direccion: columnas[3] ? columnas[3].trim() : ""
         };
       });
 
@@ -79,7 +79,7 @@ function cargarBarrios() {
               html += "</table>";
             }
 
-            document.getElementById("contenido").innerHTML = html;
+            document.getElementById("panel").innerHTML = html;
           });
 
         }
@@ -87,6 +87,7 @@ function cargarBarrios() {
 
     });
 }
+
 
 
 
