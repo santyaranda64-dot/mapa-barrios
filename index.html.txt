@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Mapa Instituciones CABA</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+  <style>
+    body { margin: 0; display: flex; font-family: Arial; }
+    #map { width: 70%; height: 100vh; }
+    #panel { width: 30%; padding: 15px; overflow-y: auto; border-left: 1px solid #ccc; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td { border: 1px solid #ccc; padding: 6px; }
+  </style>
+</head>
+<body>
+
+<div id="map"></div>
+<div id="panel">
+  <h2>Seleccioná un barrio</h2>
+  <div id="contenido"></div>
+</div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>
