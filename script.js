@@ -6,7 +6,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 let instituciones = [];
 
-// 1️⃣ Primero cargamos los datos desde Google Sheets
+//  Primero cargamos los datos desde Google Sheets
 fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vQUDk_hKSVyoC6w4k0Do4QVTvXr0JvYEdC7HwqqEeWPlUgWva9YZy1tUSBL2gmFmvgKmGCGg2p9oQAM/pub?output=csv")
   .then(response => response.text())
   .then(csv => {
@@ -26,7 +26,7 @@ fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vQUDk_hKSVyoC6w4k0Do4QVTv
         };
       });
 
-    // 2️⃣ Recién ahora cargamos los barrios
+    //  Recién ahora cargamos los barrios
     cargarBarrios();
   });
 
@@ -87,5 +87,6 @@ function cargarBarrios() {
 
     });
 }
+
 
 
