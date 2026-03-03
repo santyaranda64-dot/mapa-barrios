@@ -120,21 +120,25 @@ function cargarBarrios() {
       // =============================
 
       function actualizarLabels() {
-        const zoom = map.getZoom();
+  const zoom = map.getZoom();
 
-        document.querySelectorAll(".label-barrio").forEach(label => {
+  document.querySelectorAll(".label-barrio").forEach(label => {
 
-          if (zoom < 12) {
-            label.style.display = "none";
-          } else {
-            label.style.display = "block";
+    // 👇 Si el zoom es bajo, ocultar completamente
+    if (zoom <= 11) {
+      label.style.display = "none";
+      return;
+    }
 
-            const size = Math.max(11, zoom * 1.2);
-            label.style.fontSize = size + "px";
-          }
+    // 👇 Si el zoom es suficiente, mostrar
+    label.style.display = "block";
 
-        });
-      }
+    // Escala más controlada (no crece exageradamente)
+    const size = 12 + (zoom - 12) * 1.5;
+    label.style.fontSize = size + "px";
+
+  });
+}
 
       map.on("zoomend", actualizarLabels);
       actualizarLabels();
@@ -162,3 +166,4 @@ function cerrar() {
 
 cerrarModal.addEventListener("click", cerrar);
 overlay.addEventListener("click", cerrar);
+
