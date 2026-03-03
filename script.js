@@ -1,12 +1,14 @@
 var map = L.map('map').setView([-34.6037, -58.3816], 12);
 
+// Fondo claro estilo institucional
 L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
   attribution: '&copy; OpenStreetMap &copy; CARTO'
 }).addTo(map);
 
 let instituciones = [];
+
 // =============================
-// 1️ Cargar datos desde Google Sheets
+// 1️⃣ Cargar datos desde Google Sheets
 // =============================
 
 fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vQUDk_hKSVyoC6w4k0Do4QVTvXr0JvYEdC7HwqqEeWPlUgWva9YZy1tUSBL2gmFmvgKmGCGg2p9oQAM/pub?output=csv")
@@ -34,7 +36,7 @@ fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vQUDk_hKSVyoC6w4k0Do4QVTv
 
 
 // =============================
-// 2️ Cargar GeoJSON de barrios
+// 2️⃣ Cargar GeoJSON de barrios
 // =============================
 
 function cargarBarrios() {
@@ -43,9 +45,8 @@ function cargarBarrios() {
     .then(res => res.json())
     .then(data => {
 
-      L.geoJSON(data, {
+      const geojson = L.geoJSON(data, {
 
-        // Estilo verde pastel con bordes blancos
         style: {
           color: "#ffffff",
           weight: 1.5,
@@ -53,21 +54,19 @@ function cargarBarrios() {
           fillOpacity: 0.6
         },
 
-onEachFeature: function(feature, layer) {
+        onEachFeature: function(feature, layer) {
 
-  const nombreBarrio = feature.properties.BARRIO;
+          const nombreBarrio = feature.properties.BARRIO;
 
-  layer.bindTooltip(nombreBarrio, {
-    permanent: true,
-    direction: "center",
-    className: "label-barrio"
-  });
+          // Label permanente centrado
+          layer.bindTooltip(nombreBarrio, {
+            permanent: true,
+            direction: "center",
+            className: "label-barrio"
+          });
 
-  // después sigue tu layer.on("click", ...)
-
+          // Click para abrir modal
           layer.on("click", function() {
-
-            let nombreBarrio = feature.properties.BARRIO;
 
             let filtradas = instituciones.filter(i =>
               i.barrio?.trim().toUpperCase() === nombreBarrio?.trim().toUpperCase()
@@ -78,6 +77,7 @@ onEachFeature: function(feature, layer) {
             if (filtradas.length === 0) {
               html += "<p>No hay instituciones cargadas.</p>";
             } else {
+
               html += `
                 <table>
                   <tr>
@@ -100,9 +100,6 @@ onEachFeature: function(feature, layer) {
               html += "</table>";
             }
 
-            const modal = document.getElementById("modalBarrio");
-            const overlay = document.getElementById("overlay");
-
             document.getElementById("contenidoModal").innerHTML = html;
 
             overlay.style.display = "block";
@@ -111,19 +108,43 @@ onEachFeature: function(feature, layer) {
             setTimeout(() => {
               modal.classList.add("activo");
             }, 10);
-
           });
 
         }
 
       }).addTo(map);
 
+
+      // =============================
+      // 🔥 Control dinámico según zoom
+      // =============================
+
+      function actualizarLabels() {
+        const zoom = map.getZoom();
+
+        document.querySelectorAll(".label-barrio").forEach(label => {
+
+          if (zoom < 12) {
+            label.style.display = "none";
+          } else {
+            label.style.display = "block";
+
+            const size = Math.max(11, zoom * 1.2);
+            label.style.fontSize = size + "px";
+          }
+
+        });
+      }
+
+      map.on("zoomend", actualizarLabels);
+      actualizarLabels();
+
     });
 }
 
 
 // =============================
-// 3️ Lógica para cerrar modal
+// 3️⃣ Lógica para cerrar modal
 // =============================
 
 const cerrarModal = document.getElementById("cerrarModal");
@@ -141,5 +162,3 @@ function cerrar() {
 
 cerrarModal.addEventListener("click", cerrar);
 overlay.addEventListener("click", cerrar);
-
-
