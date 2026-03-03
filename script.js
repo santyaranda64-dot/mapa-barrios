@@ -1,4 +1,14 @@
-var map = L.map('map').setView([-34.6037, -58.3816], 12);
+var boundsCABA = [
+  [-34.705, -58.531],  // Suroeste
+  [-34.526, -58.335]   // Noreste
+];
+
+var map = L.map('map', {
+  maxBounds: boundsCABA,
+  maxBoundsViscosity: 1.0,   // efecto "pared dura"
+  minZoom: 11,
+  maxZoom: 17
+}).setView([-34.6037, -58.3816], 12);
 
 // Fondo claro estilo institucional
 L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
