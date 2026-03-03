@@ -1,92 +1,36 @@
 // =============================
-// LIMITES DE CABA
+// 0️ Configuración inicial del mapa (limitado a CABA)
+// MAPA FIJO Y CENTRADO EN CABA
 // =============================
 
-var boundsCABA = L.latLngBounds(
-  [-34.7050, -58.5310],  // Suroeste
-  [-34.5260, -58.3350]   // Noreste
-);
-
-// =============================
-// CREACION DEL MAPA
-// =============================
-
+var boundsCABA = [
+  [-34.705, -58.531],  // Suroeste
+  [-34.526, -58.335]   // Noreste
+];
 var map = L.map('map', {
+
   center: [-34.6037, -58.3816],
   zoom: 12,
-  minZoom: 12,
-  maxZoom: 17,
-  maxBounds: boundsCABA,
-  maxBoundsViscosity: 1.0
-});
 
-// =============================
-// FONDO CLARO
-// =============================
+  minZoom: 12,   // no permite zoom out
+  maxZoom: 17,
+
+  dragging: false,          // no se puede arrastrar
+  scrollWheelZoom: true,    // solo permite zoom
+  doubleClickZoom: true,
+  boxZoom: false,
+  keyboard: false,
+  touchZoom: true
+
+});
 
 L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
   attribution: '&copy; OpenStreetMap &copy; CARTO'
 }).addTo(map);
 
-// =============================
-// CARGA DE BARRIOS
-// =============================
+var map = L.map('map', {
+maxBounds: boundsCABA,
+@@ -176,3 +192,4 @@ function cerrar() {
 
-var barriosLayer;
-
-fetch('barrios.geojson')
-  .then(response => response.json())
-  .then(data => {
-
-    barriosLayer = L.geoJSON(data, {
-      style: {
-        color: "#333",
-        weight: 1,
-        fillColor: "#ffffff",
-        fillOpacity: 0.6
-      },
-      onEachFeature: function (feature, layer) {
-
-        if (feature.properties && feature.properties.nombre) {
-
-          var centroide = layer.getBounds().getCenter();
-
-          var label = L.marker(centroide, {
-            icon: L.divIcon({
-              className: 'label-barrio',
-              html: feature.properties.nombre,
-              iconSize: [100, 20]
-            })
-          });
-
-          layer.labelMarker = label;
-          label.addTo(map);
-        }
-      }
-    }).addTo(map);
-
-    controlarLabels();
-  });
-
-// =============================
-// CONTROLAR VISIBILIDAD DE NOMBRES
-// =============================
-
-function controlarLabels() {
-
-  var zoomActual = map.getZoom();
-
-  barriosLayer.eachLayer(function (layer) {
-
-    if (layer.labelMarker) {
-
-      if (zoomActual < 13) {
-        map.removeLayer(layer.labelMarker);
-      } else {
-        map.addLayer(layer.labelMarker);
-      }
-    }
-  });
-}
-
-map.on('zoomend', controlarLabels);
+cerrarModal.addEventListener("click", cerrar);
+overlay.addEventListener("click", cerrar);
