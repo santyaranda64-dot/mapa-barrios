@@ -6,7 +6,10 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 let instituciones = [];
 
-//  Primero cargamos los datos desde Google Sheets
+// =============================
+// 1️ Cargar datos desde Google Sheets
+// =============================
+
 fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vQUDk_hKSVyoC6w4k0Do4QVTvXr0JvYEdC7HwqqEeWPlUgWva9YZy1tUSBL2gmFmvgKmGCGg2p9oQAM/pub?output=csv")
   .then(response => response.text())
   .then(csv => {
@@ -19,16 +22,22 @@ fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vQUDk_hKSVyoC6w4k0Do4QVTv
         const columnas = fila.split(",");
 
         return {
-    barrio: columnas[0]?.trim(),
-    nombre: columnas[1]?.trim(),
-    actividad: columnas[2]?.trim(),
-    direccion: columnas[3]?.trim(),
-    tipo: columnas[4]?.trim()   //
-  };
-});
-    //  Recién ahora cargamos los barrios
+          barrio: columnas[0]?.trim(),
+          nombre: columnas[1]?.trim(),
+          actividad: columnas[2]?.trim(),
+          direccion: columnas[3]?.trim(),
+          tipo: columnas[4]?.trim()
+        };
+      });
+
+    // Cuando termina de cargar el CSV, recién ahí cargamos los barrios
     cargarBarrios();
   });
+
+
+// =============================
+// 2️ Cargar GeoJSON de barrios
+// =============================
 
 function cargarBarrios() {
 
@@ -42,13 +51,14 @@ function cargarBarrios() {
           weight: 1,
           fillOpacity: 0.3
         },
+
         onEachFeature: function(feature, layer) {
 
           layer.on("click", function() {
 
             let nombreBarrio = feature.properties.BARRIO;
 
-            let filtradas = instituciones.filter(i => 
+            let filtradas = instituciones.filter(i =>
               i.barrio === nombreBarrio
             );
 
@@ -69,9 +79,9 @@ function cargarBarrios() {
               filtradas.forEach(i => {
                 html += `
                   <tr>
-                    <td>${i.nombre}</td>
-                    <td>${i.actividad}</td>
-                    <td>${i.direccion}</td>
+                    <td>${i.nombre || ""}</td>
+                    <td>${i.actividad || ""}</td>
+                    <td>${i.direccion || ""}</td>
                   </tr>
                 `;
               });
@@ -79,16 +89,48 @@ function cargarBarrios() {
               html += "</table>";
             }
 
-            document.getElementById("panel").innerHTML = html;
+            // =============================
+            //  Abrir modal
+            // =============================
+
+            const modal = document.getElementById("modalBarrio");
+            const overlay = document.getElementById("overlay");
+
+            document.getElementById("contenidoModal").innerHTML = html;
+
+            overlay.style.display = "block";
+            modal.style.display = "block";
+
+            setTimeout(() => {
+              modal.classList.add("activo");
+            }, 10);
+
           });
 
         }
+
       }).addTo(map);
 
     });
 }
 
 
+// =============================
+// 3️ Lógica para cerrar modal
+// =============================
 
+const cerrarModal = document.getElementById("cerrarModal");
+const overlay = document.getElementById("overlay");
+const modal = document.getElementById("modalBarrio");
 
+function cerrar() {
+  modal.classList.remove("activo");
 
+  setTimeout(() => {
+    modal.style.display = "none";
+    overlay.style.display = "none";
+  }, 200);
+}
+
+cerrarModal.addEventListener("click", cerrar);
+overlay.addEventListener("click", cerrar);
