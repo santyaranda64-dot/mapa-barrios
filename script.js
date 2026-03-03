@@ -1,12 +1,10 @@
 var map = L.map('map').setView([-34.6037, -58.3816], 12);
 
-// Fondo gris claro (como la imagen que querés)
 L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
   attribution: '&copy; OpenStreetMap &copy; CARTO'
 }).addTo(map);
 
 let instituciones = [];
-
 // =============================
 // 1️ Cargar datos desde Google Sheets
 // =============================
@@ -133,3 +131,4 @@ function cerrar() {
 
 cerrarModal.addEventListener("click", cerrar);
 overlay.addEventListener("click", cerrar);
+
