@@ -1,9 +1,8 @@
 var map = L.map('map').setView([-34.6037, -58.3816], 12);
 
+// Fondo gris claro (como la imagen que querés)
 L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
   attribution: '&copy; OpenStreetMap &copy; CARTO'
-}).addTo(map);
-  attribution: '© OpenStreetMap'
 }).addTo(map);
 
 let instituciones = [];
@@ -32,7 +31,6 @@ fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vQUDk_hKSVyoC6w4k0Do4QVTv
         };
       });
 
-    // Cuando termina de cargar el CSV, recién ahí cargamos los barrios
     cargarBarrios();
   });
 
@@ -48,14 +46,14 @@ function cargarBarrios() {
     .then(data => {
 
       L.geoJSON(data, {
-        style: function() {
-  return {
-    color: "#ffffff",      // borde blanco
-    weight: 1.5,
-    fillColor: "#8FD3B6",  // verde pastel suave
-    fillOpacity: 0.6
-  };
-},
+
+        // Estilo verde pastel con bordes blancos
+        style: {
+          color: "#ffffff",
+          weight: 1.5,
+          fillColor: "#8FD3B6",
+          fillOpacity: 0.6
+        },
 
         onEachFeature: function(feature, layer) {
 
@@ -64,7 +62,7 @@ function cargarBarrios() {
             let nombreBarrio = feature.properties.BARRIO;
 
             let filtradas = instituciones.filter(i =>
-              i.barrio === nombreBarrio
+              i.barrio?.trim().toUpperCase() === nombreBarrio?.trim().toUpperCase()
             );
 
             let html = `<h2>${nombreBarrio}</h2>`;
@@ -93,10 +91,6 @@ function cargarBarrios() {
 
               html += "</table>";
             }
-
-            // =============================
-            //  Abrir modal
-            // =============================
 
             const modal = document.getElementById("modalBarrio");
             const overlay = document.getElementById("overlay");
@@ -139,5 +133,3 @@ function cerrar() {
 
 cerrarModal.addEventListener("click", cerrar);
 overlay.addEventListener("click", cerrar);
-
-
