@@ -1,3 +1,7 @@
+// =============================
+// 0️ Configuración inicial del mapa (limitado a CABA)
+// =============================
+
 var boundsCABA = [
   [-34.705, -58.531],  // Suroeste
   [-34.526, -58.335]   // Noreste
@@ -5,20 +9,20 @@ var boundsCABA = [
 
 var map = L.map('map', {
   maxBounds: boundsCABA,
-  maxBoundsViscosity: 1.0,   // efecto "pared dura"
+  maxBoundsViscosity: 1.0,
   minZoom: 11,
   maxZoom: 17
 }).setView([-34.6037, -58.3816], 12);
 
-// Fondo claro estilo institucional
 L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
   attribution: '&copy; OpenStreetMap &copy; CARTO'
 }).addTo(map);
 
 let instituciones = [];
 
+
 // =============================
-// 1️⃣ Cargar datos desde Google Sheets
+// 1️ Cargar datos desde Google Sheets
 // =============================
 
 fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vQUDk_hKSVyoC6w4k0Do4QVTvXr0JvYEdC7HwqqEeWPlUgWva9YZy1tUSBL2gmFmvgKmGCGg2p9oQAM/pub?output=csv")
@@ -46,7 +50,7 @@ fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vQUDk_hKSVyoC6w4k0Do4QVTv
 
 
 // =============================
-// 2️⃣ Cargar GeoJSON de barrios
+// 2️ Cargar GeoJSON de barrios
 // =============================
 
 function cargarBarrios() {
@@ -68,7 +72,7 @@ function cargarBarrios() {
 
           const nombreBarrio = feature.properties.BARRIO;
 
-          // Label permanente centrado
+          // Label centrado permanente
           layer.bindTooltip(nombreBarrio, {
             permanent: true,
             direction: "center",
@@ -126,29 +130,25 @@ function cargarBarrios() {
 
 
       // =============================
-      // 🔥 Control dinámico según zoom
+      // 3️ Control dinámico de labels según zoom
       // =============================
 
       function actualizarLabels() {
-  const zoom = map.getZoom();
+        const zoom = map.getZoom();
 
-  document.querySelectorAll(".label-barrio").forEach(label => {
+        document.querySelectorAll(".label-barrio").forEach(label => {
 
-    // 👇 Si el zoom es bajo, ocultar completamente
-    if (zoom <= 11) {
-      label.style.display = "none";
-      return;
-    }
+          if (zoom <= 11) {
+            label.style.display = "none";
+            return;
+          }
 
-    // 👇 Si el zoom es suficiente, mostrar
-    label.style.display = "block";
+          label.style.display = "block";
 
-    // Escala más controlada (no crece exageradamente)
-    const size = 12 + (zoom - 12) * 1.5;
-    label.style.fontSize = size + "px";
-
-  });
-}
+          const size = 12 + (zoom - 12) * 1.5;
+          label.style.fontSize = size + "px";
+        });
+      }
 
       map.on("zoomend", actualizarLabels);
       actualizarLabels();
@@ -158,7 +158,7 @@ function cargarBarrios() {
 
 
 // =============================
-// 3️⃣ Lógica para cerrar modal
+// 4️ Lógica para cerrar modal
 // =============================
 
 const cerrarModal = document.getElementById("cerrarModal");
@@ -176,4 +176,3 @@ function cerrar() {
 
 cerrarModal.addEventListener("click", cerrar);
 overlay.addEventListener("click", cerrar);
-
