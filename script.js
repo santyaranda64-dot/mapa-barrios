@@ -1,200 +1,34 @@
 // =============================
-// MAPA COMPLETAMENTE FIJO EN CABA
+// MAPA TOTALMENTE FIJO EN CABA
 // =============================
+
+// Límites exactos de CABA (aproximados)
+var boundsCABA = L.latLngBounds(
+  [-34.7050, -58.5310],  // Suroeste
+  [-34.5260, -58.3350]   // Noreste
+);
 
 var map = L.map('map', {
   center: [-34.6037, -58.3816],
   zoom: 13,
   minZoom: 13,
   maxZoom: 17,
-  zoomControl: true
+  maxBounds: boundsCABA,
+  maxBoundsViscosity: 1.0,   // Evita cualquier escape o rebote
+  zoomControl: true,
+  dragging: false,
+  scrollWheelZoom: true,     // Cambiá a false si querés bloquear zoom
+  doubleClickZoom: false,
+  boxZoom: false,
+  keyboard: false,
+  touchZoom: false,
+  inertia: false
 });
 
-// Desactivar absolutamente todo movimiento
-map.dragging.disable();
-map.touchZoom.disable();
-map.doubleClickZoom.disable();
-map.scrollWheelZoom.disable();
-map.boxZoom.disable();
-map.keyboard.disable();
-map.tap && map.tap.disable();
+// Forzar que nunca se salga del centro
+map.setMaxBounds(boundsCABA);
 
 // Fondo
 L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
   attribution: '&copy; OpenStreetMap &copy; CARTO'
 }).addTo(map);
-L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-  attribution: '&copy; OpenStreetMap &copy; CARTO'
-}).addTo(map);
-
-var map = L.map('map', {
-  maxBounds: boundsCABA,
-  maxBoundsViscosity: 1.0,
-  minZoom: 11,
-  maxZoom: 17
-}).setView([-34.6037, -58.3816], 12);
-
-L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-  attribution: '&copy; OpenStreetMap &copy; CARTO'
-}).addTo(map);
-
-let instituciones = [];
-
-
-// =============================
-// 1️ Cargar datos desde Google Sheets
-// =============================
-
-fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vQUDk_hKSVyoC6w4k0Do4QVTvXr0JvYEdC7HwqqEeWPlUgWva9YZy1tUSBL2gmFmvgKmGCGg2p9oQAM/pub?output=csv")
-  .then(response => response.text())
-  .then(csv => {
-
-    const filas = csv.split("\n").slice(1);
-
-    instituciones = filas
-      .filter(fila => fila.trim() !== "")
-      .map(fila => {
-        const columnas = fila.split(",");
-
-        return {
-          barrio: columnas[0]?.trim(),
-          nombre: columnas[1]?.trim(),
-          actividad: columnas[2]?.trim(),
-          direccion: columnas[3]?.trim(),
-          tipo: columnas[4]?.trim()
-        };
-      });
-
-    cargarBarrios();
-  });
-
-
-// =============================
-// 2️ Cargar GeoJSON de barrios
-// =============================
-
-function cargarBarrios() {
-
-  fetch("caba_barrios.json")
-    .then(res => res.json())
-    .then(data => {
-
-      const geojson = L.geoJSON(data, {
-
-        style: {
-          color: "#ffffff",
-          weight: 1.5,
-          fillColor: "#8FD3B6",
-          fillOpacity: 0.6
-        },
-
-        onEachFeature: function(feature, layer) {
-
-          const nombreBarrio = feature.properties.BARRIO;
-
-          // Label centrado permanente
-          layer.bindTooltip(nombreBarrio, {
-            permanent: true,
-            direction: "center",
-            className: "label-barrio"
-          });
-
-          // Click para abrir modal
-          layer.on("click", function() {
-
-            let filtradas = instituciones.filter(i =>
-              i.barrio?.trim().toUpperCase() === nombreBarrio?.trim().toUpperCase()
-            );
-
-            let html = `<h2>${nombreBarrio}</h2>`;
-
-            if (filtradas.length === 0) {
-              html += "<p>No hay instituciones cargadas.</p>";
-            } else {
-
-              html += `
-                <table>
-                  <tr>
-                    <th>Nombre</th>
-                    <th>Actividad</th>
-                    <th>Dirección</th>
-                  </tr>
-              `;
-
-              filtradas.forEach(i => {
-                html += `
-                  <tr>
-                    <td>${i.nombre || ""}</td>
-                    <td>${i.actividad || ""}</td>
-                    <td>${i.direccion || ""}</td>
-                  </tr>
-                `;
-              });
-
-              html += "</table>";
-            }
-
-            document.getElementById("contenidoModal").innerHTML = html;
-
-            overlay.style.display = "block";
-            modal.style.display = "block";
-
-            setTimeout(() => {
-              modal.classList.add("activo");
-            }, 10);
-          });
-
-        }
-
-      }).addTo(map);
-
-
-      // =============================
-      // 3️ Control dinámico de labels según zoom
-      // =============================
-
-      function actualizarLabels() {
-        const zoom = map.getZoom();
-
-        document.querySelectorAll(".label-barrio").forEach(label => {
-
-          if (zoom <= 11) {
-            label.style.display = "none";
-            return;
-          }
-
-          label.style.display = "block";
-
-          const size = 12 + (zoom - 12) * 1.5;
-          label.style.fontSize = size + "px";
-        });
-      }
-
-      map.on("zoomend", actualizarLabels);
-      actualizarLabels();
-
-    });
-}
-
-
-// =============================
-// 4️ Lógica para cerrar modal
-// =============================
-
-const cerrarModal = document.getElementById("cerrarModal");
-const overlay = document.getElementById("overlay");
-const modal = document.getElementById("modalBarrio");
-
-function cerrar() {
-  modal.classList.remove("activo");
-
-  setTimeout(() => {
-    modal.style.display = "none";
-    overlay.style.display = "none";
-  }, 200);
-}
-
-cerrarModal.addEventListener("click", cerrar);
-overlay.addEventListener("click", cerrar);
-
-
