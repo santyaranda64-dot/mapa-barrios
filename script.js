@@ -1,6 +1,8 @@
 var map = L.map('map').setView([-34.6037, -58.3816], 12);
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+  attribution: '&copy; OpenStreetMap &copy; CARTO'
+}).addTo(map);
   attribution: '© OpenStreetMap'
 }).addTo(map);
 
@@ -47,10 +49,11 @@ function cargarBarrios() {
 
       L.geoJSON(data, {
         style: {
-          color: "#333",
-          weight: 1,
-          fillOpacity: 0.3
-        },
+  color: "#ffffff",       // borde blanco
+  weight: 1.5,
+  fillColor: "#7FC8A9",   // verde suave
+  fillOpacity: 0.6
+},
 
         onEachFeature: function(feature, layer) {
 
@@ -134,3 +137,4 @@ function cerrar() {
 
 cerrarModal.addEventListener("click", cerrar);
 overlay.addEventListener("click", cerrar);
+
