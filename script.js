@@ -1,24 +1,28 @@
 // =============================
-// MAPA FIJO Y CENTRADO EN CABA
+// MAPA COMPLETAMENTE FIJO EN CABA
 // =============================
 
 var map = L.map('map', {
-
   center: [-34.6037, -58.3816],
-  zoom: 12,
-
-  minZoom: 12,   // no permite zoom out
+  zoom: 13,
+  minZoom: 13,
   maxZoom: 17,
-
-  dragging: false,          // no se puede arrastrar
-  scrollWheelZoom: true,    // solo permite zoom
-  doubleClickZoom: true,
-  boxZoom: false,
-  keyboard: false,
-  touchZoom: true
-
+  zoomControl: true
 });
 
+// Desactivar absolutamente todo movimiento
+map.dragging.disable();
+map.touchZoom.disable();
+map.doubleClickZoom.disable();
+map.scrollWheelZoom.disable();
+map.boxZoom.disable();
+map.keyboard.disable();
+map.tap && map.tap.disable();
+
+// Fondo
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+  attribution: '&copy; OpenStreetMap &copy; CARTO'
+}).addTo(map);
 L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
   attribution: '&copy; OpenStreetMap &copy; CARTO'
 }).addTo(map);
@@ -192,4 +196,5 @@ function cerrar() {
 
 cerrarModal.addEventListener("click", cerrar);
 overlay.addEventListener("click", cerrar);
+
 
