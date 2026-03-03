@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Mapa Instituciones CABA</title>
   <meta charset="UTF-8">
+  <title>Mapa Instituciones CABA</title>
+
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 
   <style>
@@ -15,6 +16,10 @@
       width: 100%; 
       height: 100vh; 
     }
+
+    /* =============================
+       Tabla del modal
+    ============================= */
 
     table {
       width: 100%;
@@ -43,13 +48,26 @@
       transition: background 0.2s ease;
     }
 
-    .modal h2 {
-      margin: 0 0 10px 0;
-      font-size: 20px;
-      font-weight: 700;
+    /* =============================
+       Label de los barrios
+    ============================= */
+
+    .label-barrio {
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      color: #222;
+      font-weight: 600;
+      font-size: 13px;
+      text-align: center;
+      text-shadow: 0 0 4px rgba(255,255,255,0.9);
+      pointer-events: none; /* no bloquea el click */
     }
 
-    /* Overlay */
+    /* =============================
+       Overlay
+    ============================= */
+
     #overlay {
       position: fixed;
       inset: 0;
@@ -58,7 +76,10 @@
       z-index: 1000;
     }
 
-    /* Modal */
+    /* =============================
+       Modal
+    ============================= */
+
     .modal {
       position: fixed;
       top: 50%;
@@ -80,6 +101,12 @@
       transform: translate(-50%, -50%) scale(1);
     }
 
+    .modal h2 {
+      margin: 0 0 10px 0;
+      font-size: 20px;
+      font-weight: 700;
+    }
+
     #cerrarModal {
       position: absolute;
       top: 10px;
@@ -89,6 +116,7 @@
       font-size: 22px;
       cursor: pointer;
     }
+
   </style>
 </head>
 
