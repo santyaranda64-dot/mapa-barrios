@@ -53,7 +53,17 @@ function cargarBarrios() {
           fillOpacity: 0.6
         },
 
-        onEachFeature: function(feature, layer) {
+onEachFeature: function(feature, layer) {
+
+  const nombreBarrio = feature.properties.BARRIO;
+
+  layer.bindTooltip(nombreBarrio, {
+    permanent: true,
+    direction: "center",
+    className: "label-barrio"
+  });
+
+  // después sigue tu layer.on("click", ...)
 
           layer.on("click", function() {
 
@@ -131,4 +141,5 @@ function cerrar() {
 
 cerrarModal.addEventListener("click", cerrar);
 overlay.addEventListener("click", cerrar);
+
 
