@@ -48,11 +48,13 @@ function cargarBarrios() {
     .then(data => {
 
       L.geoJSON(data, {
-        style: {
-  color: "#ffffff",       // borde blanco
-  weight: 1.5,
-  fillColor: "#7FC8A9",   // verde suave
-  fillOpacity: 0.6
+        style: function() {
+  return {
+    color: "#ffffff",      // borde blanco
+    weight: 1.5,
+    fillColor: "#8FD3B6",  // verde pastel suave
+    fillOpacity: 0.6
+  };
 },
 
         onEachFeature: function(feature, layer) {
@@ -137,4 +139,5 @@ function cerrar() {
 
 cerrarModal.addEventListener("click", cerrar);
 overlay.addEventListener("click", cerrar);
+
 
