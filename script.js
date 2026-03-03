@@ -34,7 +34,7 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
 
 var barriosLayer;
 
-fetch('barrios.geojson')
+fetch('caba_barrios.json')
   .then(response => response.json())
   .then(data => {
 
@@ -90,3 +90,4 @@ function controlarLabels() {
 }
 
 map.on('zoomend', controlarLabels);
+
