@@ -25,7 +25,8 @@ let instituciones = [];
 // 1️ Cargar datos desde Google Sheets
 // =============================
 
-fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vQUDk_hKSVyoC6w4k0Do4QVTvXr0JvYEdC7HwqqEeWPlUgWva9YZy1tUSBL2gmFmvgKmGCGg2p9oQAM/pub?output=csv")
+const timestamp = new Date().getTime();
+fetch(`https://docs.google.com/spreadsheets/d/e/2PACX-1vQUDk_hKSVyoC6w4k0Do4QVTvXr0JvYEdC7HwqqEeWPlUgWva9YZy1tUSBL2gmFmvgKmGCGg2p9oQAM/pub?output=csv&t=${timestamp}`)
   .then(response => response.text())
   .then(csv => {
 
