@@ -1,41 +1,8 @@
 // =============================
-// 0️ Configuración inicial del mapa (limitado a CABA)
+// 0️ Función robusta para parsear CSV
+// (maneja comas dentro de celdas con comillas)
 // =============================
 
-var boundsCABA = [
-  [-34.705, -58.531],  // Suroeste
-  [-34.526, -58.335]   // Noreste
-];
-
-var map = L.map('map', {
-  maxBounds: boundsCABA,
-  maxBoundsViscosity: 1.0,
-  minZoom: 11,
-  maxZoom: 17
-}).setView([-34.6037, -58.3816], 12);
-
-L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-  attribution: '&copy; OpenStreetMap &copy; CARTO'
-}).addTo(map);
-
-let instituciones = [];
-
-
-// =============================
-// 1️ Cargar datos desde Google Sheets
-// =============================
-
-const timestamp = new Date().getTime();
-fetch(`https://docs.google.com/spreadsheets/d/e/2PACX-1vQUDk_hKSVyoC6w4k0Do4QVTvXr0JvYEdC7HwqqEeWPlUgWva9YZy1tUSBL2gmFmvgKmGCGg2p9oQAM/pub?output=csv&t=${timestamp}`)
-  .then(response => response.text())
-  .then(csv => {
-
-    const filas = csv.split("\n").slice(1);
-
-    instituciones = filas
-      .filter(fila => fila.trim() !== "")
-      .map(fila => {
-        // ✅ Función robusta para parsear una línea CSV
 function parsearLineaCSV(linea) {
   const resultado = [];
   let campo = "";
@@ -58,6 +25,46 @@ function parsearLineaCSV(linea) {
   return resultado;
 }
 
+
+// =============================
+// 1️ Configuración inicial del mapa (limitado a CABA)
+// =============================
+
+var boundsCABA = [
+  [-34.705, -58.531],  // Suroeste
+  [-34.526, -58.335]   // Noreste
+];
+
+var map = L.map('map', {
+  maxBounds: boundsCABA,
+  maxBoundsViscosity: 1.0,
+  minZoom: 11,
+  maxZoom: 17
+}).setView([-34.6037, -58.3816], 12);
+
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+  attribution: '&copy; OpenStreetMap &copy; CARTO'
+}).addTo(map);
+
+let instituciones = [];
+
+
+// =============================
+// 2️ Cargar datos desde Google Sheets
+// =============================
+
+const timestamp = new Date().getTime();
+fetch(`https://docs.google.com/spreadsheets/d/e/2PACX-1vQUDk_hKSVyoC6w4k0Do4QVTvXr0JvYEdC7HwqqEeWPlUgWva9YZy1tUSBL2gmFmvgKmGCGg2p9oQAM/pub?output=csv&t=${timestamp}`)
+  .then(response => response.text())
+  .then(csv => {
+
+    const filas = csv.split("\n").slice(1);
+
+    instituciones = filas
+      .filter(fila => fila.trim() !== "")
+      .map(fila => {
+        const columnas = parsearLineaCSV(fila); // ✅ parseo robusto
+
         return {
           barrio: columnas[0]?.trim(),
           nombre: columnas[1]?.trim(),
@@ -72,7 +79,7 @@ function parsearLineaCSV(linea) {
 
 
 // =============================
-// 2️ Cargar GeoJSON de barrios
+// 3️ Cargar GeoJSON de barrios
 // =============================
 
 function cargarBarrios() {
@@ -152,7 +159,7 @@ function cargarBarrios() {
 
 
       // =============================
-      // 3️ Control dinámico de labels según zoom
+      // 4️ Control dinámico de labels según zoom
       // =============================
 
       function actualizarLabels() {
@@ -180,7 +187,7 @@ function cargarBarrios() {
 
 
 // =============================
-// 4️ Lógica para cerrar modal
+// 5️ Lógica para cerrar modal
 // =============================
 
 const cerrarModal = document.getElementById("cerrarModal");
