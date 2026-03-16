@@ -35,7 +35,28 @@ fetch(`https://docs.google.com/spreadsheets/d/e/2PACX-1vQUDk_hKSVyoC6w4k0Do4QVTv
     instituciones = filas
       .filter(fila => fila.trim() !== "")
       .map(fila => {
-        const columnas = fila.split(",");
+        // ✅ Función robusta para parsear una línea CSV
+function parsearLineaCSV(linea) {
+  const resultado = [];
+  let campo = "";
+  let dentroDeComillas = false;
+
+  for (let i = 0; i < linea.length; i++) {
+    const char = linea[i];
+
+    if (char === '"') {
+      dentroDeComillas = !dentroDeComillas;
+    } else if (char === "," && !dentroDeComillas) {
+      resultado.push(campo.trim());
+      campo = "";
+    } else {
+      campo += char;
+    }
+  }
+
+  resultado.push(campo.trim()); // última columna
+  return resultado;
+}
 
         return {
           barrio: columnas[0]?.trim(),
