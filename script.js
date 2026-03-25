@@ -34,14 +34,13 @@ fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vQUDk_hKSVyoC6w4k0Do4QVTv
     instituciones = filas
       .filter(fila => fila.trim() !== "")
       .map(fila => {
-        const columnas = fila.split(",");
-
+        const columnas = fila.match(/(".*?"|[^",\r]+)(?=\s*,|\s*$)/g) || [];
         return {
-          barrio: columnas[0]?.trim(),
-          nombre: columnas[1]?.trim(),
-          actividad: columnas[2]?.trim(),
-          direccion: columnas[3]?.trim(),
-          tipo: columnas[4]?.trim()
+          barrio:    columnas[0]?.replace(/"/g, "").trim(),
+          nombre:    columnas[1]?.replace(/"/g, "").trim(),
+          actividad: columnas[2]?.replace(/"/g, "").trim(),
+          direccion: columnas[3]?.replace(/"/g, "").trim(),
+          tipo:      columnas[4]?.replace(/"/g, "").trim()
         };
       });
 
