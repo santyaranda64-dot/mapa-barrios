@@ -34,7 +34,7 @@ fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vQUDk_hKSVyoC6w4k0Do4QVTv
     instituciones = filas
       .filter(fila => fila.trim() !== "")
       .map(fila => {
-        const columnas = fila.split(";");
+        const columnas = fila.split(",");
 
         return {
           barrio: columnas[0]?.trim(),
